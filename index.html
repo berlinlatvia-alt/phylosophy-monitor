@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b0f19">
+<title>Phylosophy Monitor</title>
+<link rel="manifest" href="manifest.json">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0b0f19; color: #f8fafc; padding: 12px; min-height: 100dvh; }
+.header { padding: 12px 0 8px 0; border-bottom: 1px solid #1e293b; margin-bottom: 12px; }
+.header h1 { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header .sub { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.card { background: rgba(30,41,59,0.7); border-radius: 10px; padding: 10px; border: 1px solid #334155; }
+.card .label { font-size: 0.6rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.card .value { font-size: 1.5rem; font-weight: 800; margin-top: 2px; }
+.card .subtext { font-size: 0.65rem; color: #64748b; margin-top: 2px; }
+.value.green { color: #34d399; }
+.value.blue { color: #38bdf8; }
+.value.yellow { color: #fbbf24; }
+.value.red { color: #f87171; }
+
+.section-title { font-size: 0.85rem; font-weight: 700; color: #38bdf8; margin: 12px 0 6px 0; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
+
+.task { background: rgba(30,41,59,0.7); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; border-left: 3px solid #38bdf8; }
+.task .title { font-size: 0.8rem; font-weight: 700; }
+.task .meta { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; display: flex; gap: 6px; align-items: center; }
+.task .progress { margin-top: 4px; }
+.progress-bar { background: #0f172a; border-radius: 6px; height: 4px; overflow: hidden; }
+.progress-fill { background: linear-gradient(90deg, #38bdf8, #34d399); height: 100%; border-radius: 6px; transition: width 0.5s; }
+
+.product { background: rgba(30,41,59,0.7); border-radius: 8px; padding: 8px 10px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+.product .name { font-size: 0.75rem; font-weight: 600; }
+.badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
+.badge-live { background: #10b98120; color: #34d399; border: 1px solid #10b98140; }
+.badge-build { background: #f59e0b20; color: #fbbf24; border: 1px solid #f59e0b40; }
+
+.status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; }
+.dot-online { background: #34d399; box-shadow: 0 0 6px #34d399; }
+.dot-offline { background: #f87171; }
+
+.footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #1e293b; font-size: 0.6rem; color: #475569; text-align: center; }
+
+@media (prefers-color-scheme: light) {
+    body { background: #f8fafc; color: #0f172a; }
+    .card, .task, .product { background: rgba(255,255,255,0.8); border-color: #e2e8f0; }
+    .header { border-color: #e2e8f0; }
+    .section-title { border-color: #e2e8f0; }
+    .footer { border-color: #e2e8f0; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+    <h1>Phylosophy Monitor</h1>
+    <div class="sub"><span class="status-dot" id="statusDot"></span><span id="statusText">checking...</span> · <span id="timeDisplay"></span></div>
+</div>
+
+<div class="grid" id="statsGrid">
+    <div class="card"><div class="label">VPS Status</div><div class="value blue" id="vpsStatus">—</div><div class="subtext">x402 endpoint</div></div>
+    <div class="card"><div class="label">Revenue</div><div class="value green" id="revenue">$0</div><div class="subtext">all time</div></div>
+    <div class="card"><div class="label">Buyer Requests</div><div class="value yellow" id="buyerRequests">0</div><div class="subtext">organic</div></div>
+    <div class="card"><div class="label">402 Challenges</div><div class="value" id="challenges">0</div><div class="subtext">triggered</div></div>
+</div>
+
+<div class="section-title">Active Tasks</div>
+<div id="tasksContainer">
+    <div class="task">
+        <div class="title">Checking VPS...</div>
+        <div class="meta">loading</div>
+    </div>
+</div>
+
+<div class="section-title">Products</div>
+<div id="productsContainer">
+    <div class="product"><span class="name">x402 Web Scraper</span><span class="badge badge-live">LIVE</span></div>
+    <div class="product"><span class="name">Agent Memory System</span><span class="badge badge-build">READY</span></div>
+    <div class="product"><span class="name">Never-Stop Skill</span><span class="badge badge-build">READY</span></div>
+    <div class="product"><span class="name">OFSM-1 Anti-Bias</span><span class="badge badge-build">READY</span></div>
+    <div class="product"><span class="name">Polymarket Arb Engine</span><span class="badge badge-live">LIVE</span></div>
+    <div class="product"><span class="name">Keywords Intel Oracle</span><span class="badge badge-build">BUILD</span></div>
+</div>
+
+<div class="section-title">Quick Links</div>
+<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
+    <a href="http://54.168.247.83:8402/dashboard" style="background:#1e293b;color:#38bdf8;padding:6px 12px;border-radius:8px;font-size:0.7rem;font-weight:600;text-decoration:none;border:1px solid #334155;">Full Dashboard</a>
+    <a href="http://54.168.247.83:8402/api/v1/health" style="background:#1e293b;color:#38bdf8;padding:6px 12px;border-radius:8px;font-size:0.7rem;font-weight:600;text-decoration:none;border:1px solid #334155;">API Health</a>
+</div>
+
+<div class="footer">Phylosophy AGI · <span id="lastUpdate">—</span></div>
+
+<script>
+const VPS_BASE = 'http://54.168.247.83:8402';
+
+function updateTime() {
+    document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString();
+}
+
+async function fetchHealth() {
+    try {
+        const r = await fetch(`${VPS_BASE}/api/v1/health`);
+        const d = await r.json();
+        document.getElementById('vpsStatus').textContent = 'ONLINE';
+        document.getElementById('statusDot').className = 'status-dot dot-online';
+        document.getElementById('statusText').textContent = d.service || 'online';
+        document.getElementById('statusDot').style.display = 'inline-block';
+        document.getElementById('revenue').textContent = '$0';
+        return true;
+    } catch {
+        document.getElementById('vpsStatus').textContent = 'OFFLINE';
+        document.getElementById('statusDot').className = 'status-dot dot-offline';
+        document.getElementById('statusText').textContent = 'disconnected';
+        return false;
+    }
+}
+
+async function fetchDashboard() {
+    try {
+        const r = await fetch(`${VPS_BASE}/dashboard`);
+        const html = await r.text();
+        
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        const statValues = doc.querySelectorAll('.stat-value, .card-value');
+        const statTitles = doc.querySelectorAll('.stat-title, .card-title');
+        
+        for (let i = 0; i < Math.min(statTitles.length, statValues.length); i++) {
+            const title = statTitles[i].textContent.trim();
+            const value = statValues[i].textContent.trim();
+            
+            if (title.includes('Buyer Requests')) {
+                document.getElementById('buyerRequests').textContent = value;
+            } else if (title.includes('402 Challenges')) {
+                document.getElementById('challenges').textContent = value;
+            } else if (title.includes('Polymarket')) {
+                document.getElementById('revenue').textContent = value;
+            }
+        }
+        
+        const taskCards = doc.querySelectorAll('.kanban-card');
+        const container = document.getElementById('tasksContainer');
+        container.innerHTML = '';
+        
+        taskCards.forEach(card => {
+            const titleEl = card.querySelector('h3, h4');
+            if (!titleEl) return;
+            const title = titleEl.textContent.trim();
+            const badgeEl = card.querySelector('.badge');
+            const badge = badgeEl ? badgeEl.textContent.trim() : '';
+            const modelEl = card.querySelector('.model-tag');
+            const model = modelEl ? modelEl.textContent.trim() : '';
+            const progressEl = card.querySelector('.progress-fill');
+            const progress = progressEl ? progressEl.style.width || '0%' : '';
+            
+            const task = document.createElement('div');
+            task.className = 'task';
+            task.innerHTML = `
+                <div class="title">${title}</div>
+                <div class="meta">
+                    <span class="badge badge-${badge.toLowerCase().includes('progress') ? 'build' : 'live'}">${badge}</span>
+                    ${model ? `<span>${model}</span>` : ''}
+                    ${progress ? `<span>${progress}</span>` : ''}
+                </div>
+                ${progress ? `<div class="progress"><div class="progress-bar"><div class="progress-fill" style="width:${progress}"></div></div></div>` : ''}
+            `;
+            container.appendChild(task);
+        });
+        
+        if (taskCards.length === 0) {
+            container.innerHTML = '<div class="task"><div class="title">No task data from VPS</div><div class="meta">dashboard parsed but empty</div></div>';
+        }
+    } catch {
+        const container = document.getElementById('tasksContainer');
+        container.innerHTML = '<div class="task"><div class="title">Could not reach VPS dashboard</div><div class="meta" style="color:#f87171;">connection failed</div></div>';
+    }
+}
+
+async function refresh() {
+    await fetchHealth();
+    await fetchDashboard();
+    document.getElementById('lastUpdate').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+    updateTime();
+}
+
+refresh();
+setInterval(refresh, 30000);
+setInterval(updateTime, 60000);
+</script>
+</body>
+</html>
