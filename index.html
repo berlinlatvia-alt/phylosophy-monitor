@@ -12,7 +12,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .header { padding: 12px 0 8px 0; border-bottom: 1px solid #1e293b; margin-bottom: 12px; }
 .header h1 { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .header .sub { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
-
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
 .card { background: rgba(30,41,59,0.7); border-radius: 10px; padding: 10px; border: 1px solid #334155; }
 .card .label { font-size: 0.6rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
@@ -22,55 +21,85 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .value.blue { color: #38bdf8; }
 .value.yellow { color: #fbbf24; }
 .value.red { color: #f87171; }
-
 .section-title { font-size: 0.85rem; font-weight: 700; color: #38bdf8; margin: 12px 0 6px 0; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
-
 .task { background: rgba(30,41,59,0.7); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; border-left: 3px solid #38bdf8; }
 .task .title { font-size: 0.8rem; font-weight: 700; }
-.task .meta { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; display: flex; gap: 6px; align-items: center; }
+.task .meta { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .task .progress { margin-top: 4px; }
 .progress-bar { background: #0f172a; border-radius: 6px; height: 4px; overflow: hidden; }
 .progress-fill { background: linear-gradient(90deg, #38bdf8, #34d399); height: 100%; border-radius: 6px; transition: width 0.5s; }
-
 .product { background: rgba(30,41,59,0.7); border-radius: 8px; padding: 8px 10px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
 .product .name { font-size: 0.75rem; font-weight: 600; }
 .badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
 .badge-live { background: #10b98120; color: #34d399; border: 1px solid #10b98140; }
 .badge-build { background: #f59e0b20; color: #fbbf24; border: 1px solid #f59e0b40; }
-
+.badge-reject { background: #ef444420; color: #f87171; border: 1px solid #ef444440; }
+.badge-approve { background: #10b98120; color: #34d399; border: 1px solid #10b98140; }
 .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; }
 .dot-online { background: #34d399; box-shadow: 0 0 6px #34d399; }
 .dot-offline { background: #f87171; }
-
+.exec { background: rgba(30,41,59,0.7); border-radius: 8px; padding: 8px 10px; margin-bottom: 4px; border-left: 3px solid #818cf8; display: flex; justify-content: space-between; align-items: center; }
+.exec .name { font-size: 0.75rem; font-weight: 700; }
+.exec .verdict { font-size: 0.65rem; }
 .footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #1e293b; font-size: 0.6rem; color: #475569; text-align: center; }
-
-@media (prefers-color-scheme: light) {
-    body { background: #f8fafc; color: #0f172a; }
-    .card, .task, .product { background: rgba(255,255,255,0.8); border-color: #e2e8f0; }
-    .header { border-color: #e2e8f0; }
-    .section-title { border-color: #e2e8f0; }
-    .footer { border-color: #e2e8f0; }
-}
+.btn { display:inline-block; background:#1e293b; color:#38bdf8; padding:6px 12px; border-radius:8px; font-size:0.7rem; font-weight:600; text-decoration:none; border:1px solid #334155; }
 </style>
 </head>
 <body>
 <div class="header">
     <h1>Phylosophy Monitor</h1>
-    <div class="sub"><span class="status-dot" id="statusDot"></span><span id="statusText">checking...</span> · <span id="timeDisplay"></span></div>
+    <div class="sub"><span class="status-dot" id="statusDot"></span><span id="statusText">checking...</span> &#xB7; <span id="timeDisplay"></span></div>
 </div>
 
 <div class="grid" id="statsGrid">
-    <div class="card"><div class="label">VPS Status</div><div class="value blue" id="vpsStatus">—</div><div class="subtext">x402 endpoint</div></div>
+    <div class="card"><div class="label">VPS Status</div><div class="value blue" id="vpsStatus">&#x2014;</div><div class="subtext">x402 endpoint</div></div>
     <div class="card"><div class="label">Revenue</div><div class="value green" id="revenue">$0</div><div class="subtext">all time</div></div>
     <div class="card"><div class="label">Buyer Requests</div><div class="value yellow" id="buyerRequests">0</div><div class="subtext">organic</div></div>
-    <div class="card"><div class="label">402 Challenges</div><div class="value" id="challenges">0</div><div class="subtext">triggered</div></div>
+    <div class="card"><div class="label">Executives</div><div class="value blue" id="execCount">5/5</div><div class="subtext">consulted round 1</div></div>
 </div>
 
-<div class="section-title">Active Tasks</div>
-<div id="tasksContainer">
-    <div class="task">
-        <div class="title">Checking VPS...</div>
-        <div class="meta">loading</div>
+<div class="section-title">Autonomous Company - Executive Decisions</div>
+<div id="execContainer">
+    <div class="exec"><div><div class="name">GM (Kimi K3)</div><div class="meta" style="font-size:0.6rem;color:#64748b;">strategic</div></div><span class="badge badge-approve">APPROVED</span></div>
+    <div class="exec"><div><div class="name">CTO (GLM 5.2)</div><div class="meta" style="font-size:0.6rem;color:#64748b;">technical</div></div><span class="badge badge-approve">CONDITIONAL</span></div>
+    <div class="exec"><div><div class="name">Board (Opus 5)</div><div class="meta" style="font-size:0.6rem;color:#64748b;">final approval</div></div><span class="badge badge-approve">APPROVED</span></div>
+    <div class="exec"><div><div class="name">Supervisor (Grok)</div><div class="meta" style="font-size:0.6rem;color:#64748b;">bias check</div></div><span class="badge badge-reject">FAILED</span></div>
+    <div class="exec"><div><div class="name">HR (DeepSeek)</div><div class="meta" style="font-size:0.6rem;color:#64748b;">recruiting</div></div><span class="badge badge-approve">HIRED</span></div>
+</div>
+
+<div class="section-title">Sub-Agent Team (HR DeepSeek Hires)</div>
+<div id="teamContainer">
+    <div class="product"><span class="name">Marketing Lead</span><span style="font-size:0.6rem;color:#94a3b8;">bytedance/seed-4.7-flash:free</span></div>
+    <div class="product"><span class="name">DevOps Lead</span><span style="font-size:0.6rem;color:#94a3b8;">qwen/qwen-2.5-72b:free</span></div>
+    <div class="product"><span class="name">QA Lead</span><span style="font-size:0.6rem;color:#94a3b8;">gemma-4-31b-it:free</span></div>
+    <div class="product"><span class="name">Data Analyst</span><span style="font-size:0.6rem;color:#94a3b8;">nemotron-550b:free</span></div>
+</div>
+
+<div class="section-title">Deployments</div>
+<div id="deployContainer">
+    <div class="task" style="border-left-color:#34d399;">
+        <div class="title">&#x2705; Mobile Dashboard</div>
+        <div class="meta">berlinlatvia-alt.github.io/phylosophy-monitor/ &#xB7; LIVE</div>
+    </div>
+    <div class="task" style="border-left-color:#fbbf24;">
+        <div class="title">Gumroad Products</div>
+        <div class="meta">priority 1 &#xB7; GM/Kimi K3 approved &#xB7; pending execution</div>
+    </div>
+    <div class="task" style="border-left-color:#fbbf24;">
+        <div class="title">x402 Directory Listing</div>
+        <div class="meta">priority 2 &#xB7; agentskill.sh &#xB7; pending</div>
+    </div>
+    <div class="task" style="border-left-color:#fbbf24;">
+        <div class="title">DuckDNS Domain</div>
+        <div class="meta">priority 4 &#xB7; phylosophy-monitor.duckdns.org &#xB7; pending</div>
+    </div>
+    <div class="task" style="border-left-color:#fbbf24;">
+        <div class="title">VPS Security Hardening</div>
+        <div class="meta">CTO requirement &#xB7; TLS + auth &#xB7; pending</div>
+    </div>
+    <div class="task" style="border-left-color:#818cf8;">
+        <div class="title">Org Hierarchy (Advisory)</div>
+        <div class="meta">Board C8: advisory only &#xB7; no prod credentials</div>
     </div>
 </div>
 
@@ -86,14 +115,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
 <div class="section-title">Quick Links</div>
 <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
-    <a href="http://54.168.247.83:8402/dashboard" style="background:#1e293b;color:#38bdf8;padding:6px 12px;border-radius:8px;font-size:0.7rem;font-weight:600;text-decoration:none;border:1px solid #334155;">Full Dashboard</a>
-    <a href="http://54.168.247.83:8402/api/v1/health" style="background:#1e293b;color:#38bdf8;padding:6px 12px;border-radius:8px;font-size:0.7rem;font-weight:600;text-decoration:none;border:1px solid #334155;">API Health</a>
+    <a href="http://54.168.247.83:8402/dashboard" class="btn">VPS Dashboard</a>
+    <a href="http://54.168.247.83:8402/api/v1/health" class="btn">API Health</a>
+    <a href="https://github.com/berlinlatvia-alt/phylosophy-monitor" class="btn">GitHub Repo</a>
+    <a href="https://github.com/berlinlatvia-alt/agent-skills" class="btn">Agent Skills</a>
 </div>
 
-<div class="footer">Phylosophy AGI · <span id="lastUpdate">—</span></div>
+<div class="footer">Phylosophy AGI Autonomous Company &#xB7; Round 1 complete &#xB7; <span id="lastUpdate">&#x2014;</span></div>
 
 <script>
 const VPS_BASE = 'http://54.168.247.83:8402';
+const EXEC_DATA = {
+    board_verdict: 'APPROVED_WITH_CONDITIONS',
+    conditions: ['C8 advisory only', 'C9 no self-modify', 'C10 kill switch', 'C11 append-only log', 'C19 7d stability gate', 'C20 30d advisory gate'],
+    gm_priority: '1) Gumroad 2) x402 3) free agents 4) DuckDNS',
+    cto_warnings: ['CRITICAL: No TLS', 'CRITICAL: No auth', 'CRITICAL: Single-threaded'],
+    grok_risks: 6
+};
 
 function updateTime() {
     document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString();
@@ -106,7 +144,6 @@ async function fetchHealth() {
         document.getElementById('vpsStatus').textContent = 'ONLINE';
         document.getElementById('statusDot').className = 'status-dot dot-online';
         document.getElementById('statusText').textContent = d.service || 'online';
-        document.getElementById('statusDot').style.display = 'inline-block';
         document.getElementById('revenue').textContent = '$0';
         return true;
     } catch {
@@ -121,62 +158,17 @@ async function fetchDashboard() {
     try {
         const r = await fetch(`${VPS_BASE}/dashboard`);
         const html = await r.text();
-        
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        
         const statValues = doc.querySelectorAll('.stat-value, .card-value');
         const statTitles = doc.querySelectorAll('.stat-title, .card-title');
-        
         for (let i = 0; i < Math.min(statTitles.length, statValues.length); i++) {
             const title = statTitles[i].textContent.trim();
             const value = statValues[i].textContent.trim();
-            
-            if (title.includes('Buyer Requests')) {
-                document.getElementById('buyerRequests').textContent = value;
-            } else if (title.includes('402 Challenges')) {
-                document.getElementById('challenges').textContent = value;
-            } else if (title.includes('Polymarket')) {
-                document.getElementById('revenue').textContent = value;
-            }
+            if (title.includes('Buyer Requests')) document.getElementById('buyerRequests').textContent = value;
+            else if (title.includes('Polymarket')) document.getElementById('revenue').textContent = value;
         }
-        
-        const taskCards = doc.querySelectorAll('.kanban-card');
-        const container = document.getElementById('tasksContainer');
-        container.innerHTML = '';
-        
-        taskCards.forEach(card => {
-            const titleEl = card.querySelector('h3, h4');
-            if (!titleEl) return;
-            const title = titleEl.textContent.trim();
-            const badgeEl = card.querySelector('.badge');
-            const badge = badgeEl ? badgeEl.textContent.trim() : '';
-            const modelEl = card.querySelector('.model-tag');
-            const model = modelEl ? modelEl.textContent.trim() : '';
-            const progressEl = card.querySelector('.progress-fill');
-            const progress = progressEl ? progressEl.style.width || '0%' : '';
-            
-            const task = document.createElement('div');
-            task.className = 'task';
-            task.innerHTML = `
-                <div class="title">${title}</div>
-                <div class="meta">
-                    <span class="badge badge-${badge.toLowerCase().includes('progress') ? 'build' : 'live'}">${badge}</span>
-                    ${model ? `<span>${model}</span>` : ''}
-                    ${progress ? `<span>${progress}</span>` : ''}
-                </div>
-                ${progress ? `<div class="progress"><div class="progress-bar"><div class="progress-fill" style="width:${progress}"></div></div></div>` : ''}
-            `;
-            container.appendChild(task);
-        });
-        
-        if (taskCards.length === 0) {
-            container.innerHTML = '<div class="task"><div class="title">No task data from VPS</div><div class="meta">dashboard parsed but empty</div></div>';
-        }
-    } catch {
-        const container = document.getElementById('tasksContainer');
-        container.innerHTML = '<div class="task"><div class="title">Could not reach VPS dashboard</div><div class="meta" style="color:#f87171;">connection failed</div></div>';
-    }
+    } catch {}
 }
 
 async function refresh() {
